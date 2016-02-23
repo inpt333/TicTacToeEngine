@@ -13,3 +13,5 @@ Notes for execution:
 2) The JAR files of the bots should be placed in the current directory of the engine.
 
 3) First name of the bot specified in the argument, first bot to start to play.
+
+4) If name "user" is used in any (or both) of the arguments, then the engine will allow a user (or users) to play.
