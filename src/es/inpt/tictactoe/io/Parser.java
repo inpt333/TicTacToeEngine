@@ -39,6 +39,11 @@ public class Parser {
 	 * The current player ID.
 	 */
 	private int playerId;
+	
+	/**
+	 * The current player is a human.
+	 */
+	private boolean isUser;
 
 	/**
 	 * Constructor.
@@ -49,10 +54,16 @@ public class Parser {
 		this.field = field;
 		this.playerId = playerId;
 		this.playerName = playerName;
+		this.isUser = playerName.equalsIgnoreCase("user");
 		
-		Process ps = Runtime.getRuntime().exec(new String[]{"java", "-jar", playerName + ".jar"});
-		this.scan = new Scanner(ps.getInputStream());
-		this.printer = new Printer(ps.getOutputStream());
+		if (this.isUser) {
+			this.scan = new Scanner(System.in);
+			this.printer = new Printer(System.out);
+		} else {
+			Process ps = Runtime.getRuntime().exec(new String[]{"java", "-jar", playerName + ".jar"});
+			this.scan = new Scanner(ps.getInputStream());
+			this.printer = new Printer(ps.getOutputStream());
+		}
 	}
 
 	/**
@@ -68,22 +79,35 @@ public class Parser {
 		printer.println("update game macroboard " + this.field.printMacroboard());
 		printer.println("action move 10000");
 		
+		if (this.isUser) {
+			printer.println(this.field.toString());
+		}
+		
 		try {
-			if (scan.hasNextLine()) {
-				String line = scan.nextLine();
-				if (line.length() != 0) {
-					String[] parts = line.split(" ");
-					if (parts[0].equals("place_move")) {
-						int x = Integer.parseInt(parts[1]);
-						int y = Integer.parseInt(parts[2]);
-						this.field.move(x, y, this.playerId);
-					} else { 
-						throw new Exception("Unknown command");
+			
+			boolean moved = true;
+			do {
+				if (scan.hasNextLine()) {
+					String line = scan.nextLine();
+					if (line.length() != 0) {
+						String[] parts = line.split(" ");
+						if (parts[0].equals("place_move")) {
+							int x = Integer.parseInt(parts[1]);
+							int y = Integer.parseInt(parts[2]);
+							moved = this.field.move(x, y, this.playerId);
+							
+							if (!moved) {
+								printer.println("Move not allowed");
+							}
+						} else { 
+							throw new Exception("Unknown command");
+						}
+					} else {
+						throw new Exception("No command added");
 					}
-				} else {
-					throw new Exception("No command added");
 				}
-			}
+			} while (!moved);
+			
 		} catch (Exception e) {
 			throw new GameException(this.playerName, e.getMessage());
 		}

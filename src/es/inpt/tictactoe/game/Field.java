@@ -15,6 +15,11 @@ public class Field {
 	private static final int ACTIVE_SQUARE_MACROBOARD = -1;
 	
 	/**
+	 * Inactive position representation on the macroboard
+	 */
+	private static final int INACTIVE_SQUARE_MACROBOARD = 0;
+	
+	/**
 	 * Dimensions of a  square
 	 */
 	private static final int SQUARE_DIMENSION = 3;
@@ -82,19 +87,26 @@ public class Field {
 	 * @param y Y coordinate
 	 * @param playerId the player who moved
 	 */
-	public void move(int x, int y, int playerId) {
+	public boolean move(int x, int y, int playerId) {
 		int pos = this.getPosByMove(x, y);
-		board[pos] = playerId;
-		this.lastPos = pos;
-		this.nRound++;
+		int nSquare = this.getNSquareByPos(pos);
+		
+		boolean isPossible = this.macroboard[nSquare] == -1 && this.board[pos] == 0;
+		if (isPossible) {
+			board[pos] = playerId;
+			this.lastPos = pos;
+			this.nRound++;
+		}
+		return isPossible;
 	}
 	
 	/**
 	 * @return if the game is finished
 	 */
 	public boolean isFinsihed() {
+		int newSquare = this.getNMicroSquareByPos(this.lastPos);
+		int newSquareStatus = this.checkSquare(newSquare);
 		int lastSquare = this.getNSquareByPos(this.lastPos);
-		int lastSquareStatus = this.checkSquare(lastSquare);
 		
 		boolean finished = true;
 		int status;
@@ -103,7 +115,9 @@ public class Field {
 			
 			if (status != ACTIVE_SQUARE_MACROBOARD) {
 				this.macroboard[i] = status;
-			} else if (lastSquareStatus == 0) {
+			} else if (newSquareStatus == ACTIVE_SQUARE_MACROBOARD) {
+				this.macroboard[i] = (lastSquare == i) ? ACTIVE_SQUARE_MACROBOARD : INACTIVE_SQUARE_MACROBOARD;
+			} else {
 				this.macroboard[i] = ACTIVE_SQUARE_MACROBOARD;
 			}
 			
@@ -134,7 +148,7 @@ public class Field {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer s = new StringBuffer();
+		StringBuffer s = new StringBuffer("\n");
 		int pos = 0;
 		for (int x = 0; x < BOARD_DIMENSION; x++) {
 			for (int y = 0; y < BOARD_DIMENSION; y++) {
@@ -167,7 +181,7 @@ public class Field {
 			s.append("\n");
 		}
 		
-		s.append("\n\n").append("N° round: ").append(this.nRound);
+		s.append("\n\n").append("N° round: ").append(this.nRound).append("\n");
 		
 		return s.toString();
 	}
@@ -229,12 +243,26 @@ public class Field {
 		return square;
 	}
 	
-	private int getNSquareByPos(int pos) {
+	private int getNMicroSquareByPos(int pos) {
 		return (((int)pos / SQUARE_DIMENSION) % SQUARE_DIMENSION) + (((int)pos / (BOARD_DIMENSION*SQUARE_DIMENSION))*SQUARE_DIMENSION);
+	}
+	
+	private int getNSquareByPos(int pos) {
+		int x = getX(pos);
+		int y = getY(pos);
+		return ((int) x / SQUARE_DIMENSION) + ((int) y / SQUARE_DIMENSION) * SQUARE_DIMENSION;
 	}
 	
 	private int getPosByMove(int x, int y) {
 		return y*BOARD_DIMENSION + x;
+	}
+	
+	private int getX(int pos) {
+		return pos % BOARD_DIMENSION;
+	}
+
+	private int getY(int pos) {
+		return (int) pos / BOARD_DIMENSION;
 	}
 	
 	/**
