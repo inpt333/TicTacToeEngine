@@ -244,7 +244,7 @@ public class Field {
 	}
 	
 	private int getNMicroSquareByPos(int pos) {
-		return (((int)pos / SQUARE_DIMENSION) % SQUARE_DIMENSION) + (((int)pos / (BOARD_DIMENSION*SQUARE_DIMENSION))*SQUARE_DIMENSION);
+		return (pos % SQUARE_DIMENSION) + ((((int)pos / BOARD_DIMENSION) % SQUARE_DIMENSION) * SQUARE_DIMENSION);
 	}
 	
 	private int getNSquareByPos(int pos) {
