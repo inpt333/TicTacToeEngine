@@ -65,9 +65,21 @@ public class Field {
 	
 	private int lastPos;
 	
-	private int nRound = 0;
+	private int move = 0;
 	
-	/**
+	private int round = 1;
+	
+	public int getRound() {
+        return round;
+    }
+
+
+    public int getMove() {
+            return move;
+        }
+
+
+        /**
 	 * Default constructor.
 	 */
 	public Field() {
@@ -95,7 +107,8 @@ public class Field {
 		if (isPossible) {
 			board[pos] = playerId;
 			this.lastPos = pos;
-			this.nRound++;
+			this.move++;
+			this.round = move/2 + move % 2;
 		}
 		return isPossible;
 	}
@@ -103,7 +116,7 @@ public class Field {
 	/**
 	 * @return if the game is finished
 	 */
-	public boolean isFinsihed() {
+	public boolean isFinished() {
 		int newSquare = this.getNMicroSquareByPos(this.lastPos);
 		int newSquareStatus = this.checkSquare(newSquare);
 		
@@ -180,7 +193,7 @@ public class Field {
 			s.append("\n");
 		}
 		
-		s.append("\n\n").append("N° round: ").append(this.nRound).append("\n");
+		s.append("\n\n").append("N° round: ").append(this.round).append("\n");
 		
 		return s.toString();
 	}

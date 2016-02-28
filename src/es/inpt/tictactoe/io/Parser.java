@@ -75,6 +75,8 @@ public class Parser {
 	public void run() throws GameException {
 		
 		printer.println("settings your_botid " + this.playerId);
+		printer.println("update game round " + this.field.getRound());
+		printer.println("update game move " + this.field.getMove());
 		printer.println("update game field " + this.field.printBoard());
 		printer.println("update game macroboard " + this.field.printMacroboard());
 		printer.println("action move 10000");

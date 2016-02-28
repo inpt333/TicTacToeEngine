@@ -28,7 +28,7 @@ public class EngineStarter {
 					parser2.run();
 				}
 				player = ++player % 2;
-			} while (!field.isFinsihed());
+			} while (!field.isFinished());
 			
 			System.out.println(field);
 			
