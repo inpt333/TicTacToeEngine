@@ -74,7 +74,7 @@ public class Field {
 		board = new int[BOARD_LENGTH];
 		macroboard = new int[MACROBOARD_LENGTH];
 		
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < MACROBOARD_LENGTH; i++) {
 			this.macroboard[i] = ACTIVE_SQUARE_MACROBOARD;
 		}
 	}
@@ -106,7 +106,6 @@ public class Field {
 	public boolean isFinsihed() {
 		int newSquare = this.getNMicroSquareByPos(this.lastPos);
 		int newSquareStatus = this.checkSquare(newSquare);
-		int lastSquare = this.getNSquareByPos(this.lastPos);
 		
 		boolean finished = true;
 		int status;
@@ -116,7 +115,7 @@ public class Field {
 			if (status != ACTIVE_SQUARE_MACROBOARD) {
 				this.macroboard[i] = status;
 			} else if (newSquareStatus == ACTIVE_SQUARE_MACROBOARD) {
-				this.macroboard[i] = (lastSquare == i) ? ACTIVE_SQUARE_MACROBOARD : INACTIVE_SQUARE_MACROBOARD;
+				this.macroboard[i] = (newSquare == i) ? ACTIVE_SQUARE_MACROBOARD : INACTIVE_SQUARE_MACROBOARD;
 			} else {
 				this.macroboard[i] = ACTIVE_SQUARE_MACROBOARD;
 			}
